@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  fs25-server:
+    build: .
+    container_name: fs25-server-manager
+    ports:
+      - "80:80"           # Web interface
+      - "5900:5900"       # VNC
+      - "6080:6080"       # noVNC
+      - "10823:10823"     # FS25 server port
+    volumes:
+      - ./server-data:/opt/fs25-server
+      - ./logs:/var/log/supervisor
+      - fs25-wine-data:/home/wineuser/.wine
+    environment:
+      - DISPLAY=:1
+      - WINEPREFIX=/home/wineuser/.wine
+    restart: unless-stopped
+    privileged: false
+    networks:
+      - fs25-network
+
+networks:
+  fs25-network:
+    driver: bridge
+
+volumes:
+  fs25-wine-data:
+    driver: local
